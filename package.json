@@ -1,0 +1,27 @@
+{
+  "name": "eurodns-api",
+  "version": "1.0.0",
+  "description": "A NodeJS client library for the euroDNS API servers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hacor/eurodns-api.git"
+  },
+  "keywords": [
+    "eurodns",
+    "api"
+  ],
+  "author": "Hans Cornelis",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hacor/eurodns-api/issues"
+  },
+  "homepage": "https://github.com/hacor/eurodns-api#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "x2js": "^3.2.1",
+  }
+}
