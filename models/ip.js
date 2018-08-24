@@ -21,7 +21,11 @@ class IP {
             '</request>'
 
         this.request(reqData, (err, res) => {
-            cb(err ? err.code : (null, this.ipListParser(res)));
+            if (err) {
+                cb(err)
+            } else {
+                cb(null, this.ipListParser(res))
+            }
         })
     }
 
@@ -37,8 +41,11 @@ class IP {
     add (ip, cb) {
 
         if (!ip || typeof ip === 'function') {
-            return cb('Please provide a proper IP address')
+            return cb(new Error('Please provide a proper IP address'))
         }
+
+        // Parse the IP address
+        if (!this.calidateIPaddress(ip)) return cb(new Error('Please provide a correct IP address'))
 
         const reqData =
             `<?xml version="1.0" encoding="UTF-8"?>
@@ -49,7 +56,7 @@ class IP {
             </request>`;
 
         this.request(reqData, (err, res) => {
-            cb(err ? err.code : (null, this.x2js.xml2js(res)));
+            cb(err ? err : null, res);
         })
     }
 
@@ -64,8 +71,11 @@ class IP {
     remove(ip, cb) {
 
         if (!ip || typeof ip === 'function') {
-            return cb('Please provide a proper IP address')
+            return cb(new Error('Please provide a proper IP address'))
         }
+
+        // Parse the IP address
+        if (!this.calidateIPaddress(ip)) return cb(new Error('Please provide a correct IP address'))
 
         const reqData = `
             <?xml version="1.0" encoding="UTF-8"?>
@@ -76,29 +86,41 @@ class IP {
             </request>`
 
         this.request(reqData, (err, res) => {
-            cb(err ? err.code : (null, this.x2js.xml2js(res)));
+            cb(err ? err.code : (null, res));
         })
     }
 
     /**
      * This function parses the XML array answered by the server into a javascript array of addresses
      *
-     * https://agent.api-eurodns.com/documentation/http/ip/add/
+     * https://agent.api-eurodns.com/documentation/http/ip/list/
      *
      * @param xml
      */
-    ipListParser(xml) {
-        const json = this.x2js.xml2js(xml)
-        const addresses = [];
+    ipListParser(json) {
+        let addresses = [];
 
-        if (json.resData && json.resData.list && json.resData.list.address && json.resData.list.address.length > 0) {
-            json.resData.list.address.forEach(address => {
-                addressess.push(address.__text);
+        if (json.list.address && json.list.address.length > 0) {
+            json.list.address.forEach(address => {
+                addresses.push(address.__text);
             })
         }
 
         return addresses
 
+    }
+
+    /**
+     * This function checks if an IP address is valid or not
+     *
+     * @param ipaddress     String  Required    The IP address to check
+     * @returns {boolean}   Boolean             True if correct, else false
+     */
+    validateIPaddress(ipaddress) {
+        if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress)) {
+            return (true)
+        }
+        return (false)
     }
 }
 

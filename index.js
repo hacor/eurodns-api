@@ -7,40 +7,10 @@ const defaultUrls = {
     production: "https://secure.api-eurodns.com:20015/v2/index.php"
 };
 
-const XMLString = '<?xml version="1.0" encoding="UTF-8"?>\n' +
-    '<request xmlns:ip="http://www.eurodns.com/ip">\n' +
-    '    <ip:list/>\n' +
-    '</request>\n'
-
-const XMLresp = '<?xml version="1.0" encoding="UTF-8"?>\n' +
-    '<response xmlns:tld="http://www.eurodns.com/tld">\n' +
-    '    <result code="1000">\n' +
-    '        <msg>Command completed successfully</msg>\n' +
-    '    </result>\n' +
-    '    <resData>\n' +
-    '        <tld:list numElements="#LISTCOUNTER#">\n' +
-    '            <tld:name>#TLD#</tld:name>\n' +
-    '            <tld:name>#TLD#</tld:name>\n' +
-    '            <tld:name>#TLD#</tld:name>\n' +
-    '        </tld:list>\n' +
-    '    </resData>\n' +
-    '</response>'
-
-const domainLookup = {
-    "request": {
-        "check": {
-            "name": {
-                "__prefix": "domain",
-                "__text": "#DOMAIN.TLD#"
-            },
-            "__prefix": "domain"
-        },
-        "_xmlns:domain": "http://www.eurodns.com/domain"
-    }
-}
 const Agent = require('./models/agent')
 const Ip = require('./models/ip')
 const TLD = require('./models/tld')
+const Domain = require('./models/domain')
 
 /**
  * This is the main class containing all parameters
@@ -50,11 +20,18 @@ const TLD = require('./models/tld')
  *      x2js:       Object      Optional    All params for setting up x2js, see https://github.com/abdmob/x2js#config-options
  *      mode:       String      Optional    "production" or "development" (dev is default)
  *      uri:        String      Optional    The URL of the server you wish to use, otherwise the defaults will be used
+ *      user:       String      Required    The Username for the EuroDNS Api
+ *      password:   String      Required    The Password for the EuroDNS Api
  * }
  */
 class euroDNSAPI {
     constructor (config) {
         this.config = {};
+
+        if  (!config || !config.user || !config.password) throw new Error('Please provide at least userrname and/or password')
+
+        this.config.user = config.user
+        this.config.password = config.password
 
         if (config && config.mode) {
 
@@ -86,7 +63,7 @@ class euroDNSAPI {
             }
 
         } else {
-
+            // By default we run in development mode
             this.config.mode = 'development';
             this.config.uri = defaultUrls.development;
 
@@ -103,13 +80,18 @@ class euroDNSAPI {
         this.agent = new Agent(this);
         this.ip = new Ip(this);
         this.tld = new TLD(this);
+        this.domain = new Domain(this);
 
-        //console.log(JSON.stringify(this.x2js.xml2js( XMLString )))
-        console.log(JSON.stringify(this.x2js.xml2js( XMLresp)))
-        //console.log(this.x2js.js2xml(domainLookup))
+        this.domain.check( 'appsynth.be', (err, res) => {
+            console.log(err.message)
+            console.log(res)
+        })
 
+        this.ip.list((err, res) => {
+            console.log(res)
+        })
     }
 
 };
 
-module.exports = new euroDNSAPI()
+module.exports = euroDNSAPI

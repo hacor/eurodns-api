@@ -10,14 +10,18 @@ class Agent {
      * Get the current balance of your account
      */
     balance (cb) {
-        const reqData = '' +
+        const reqData =
             '<?xml version="1.0" encoding="UTF-8"?>\n' +
             '<request xmlns:agent="http://www.eurodns.com/agent">\n' +
             '    <agent:balance/>\n' +
-            '</request>'
+            '</request>';
 
         this.request(reqData, (err, res) => {
-            cb(err ? err.code : (null, this.balanceParser(res)));
+            if (err) {
+                cb(err)
+            } else {
+                cb(null, this.balanceParser(res))
+            }
         })
     }
 
@@ -25,14 +29,12 @@ class Agent {
      * This function returns an object based on the retrieved XML by the server
      *
      * @returns { currency: "EUR", amount: Number }
-     * @param xml
+     * @param json
      */
-    balanceParser(xml) {
-        const json = this.x2js.xml2js(xml)
-
+    balanceParser(json) {
         return {
-            currency: json.resData.balance._currency,
-            amount: json.resData.balance.__text
+            currency: json.balance._currency,
+            amount: parseFloat(json.balance.__text)
         }
     }
 }

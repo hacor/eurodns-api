@@ -21,7 +21,8 @@
   },
   "homepage": "https://github.com/hacor/eurodns-api#readme",
   "dependencies": {
-    "axios": "^0.18.0",
-    "x2js": "^3.2.1",
+    "crypto-js": "^3.1.9-1",
+    "request": "^2.88.0",
+    "x2js": "^3.2.1"
   }
 }
