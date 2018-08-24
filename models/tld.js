@@ -21,7 +21,7 @@ class TLD {
             '</request>'
 
         this.request(reqData, (err, res) => {
-            cb(err ? err.code : (null, this.tldListParser(res)));
+            cb(err ? err.code : null, this.tldListParser(res));
         })
     }
 
@@ -32,12 +32,11 @@ class TLD {
      *
      * @param xml
      */
-    tldListParser(xml) {
-        const json = this.x2js.xml2js(xml)
+    tldListParser(json) {
         const tlds = [];
 
-        if (json.resData && json.resData.list && json.resData.list.name && json.resData.list.name.length > 0) {
-            json.resData.list.name.forEach(tld => {
+        if (json && json.list && json.list.name && json.list.name.length > 0) {
+            json.list.name.forEach(tld => {
                 tlds.push(tld.__text);
             })
         }

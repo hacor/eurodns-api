@@ -11,6 +11,10 @@ const Agent = require('./models/agent')
 const Ip = require('./models/ip')
 const TLD = require('./models/tld')
 const Domain = require('./models/domain')
+const ContactProfile = require('./models/contactProfile')
+const NameserverProfile = require('./models/nameserverProfile')
+const ZoneProfile = require('./models/zoneProfile')
+const Folder = require('./models/folder')
 
 /**
  * This is the main class containing all parameters
@@ -81,15 +85,11 @@ class euroDNSAPI {
         this.ip = new Ip(this);
         this.tld = new TLD(this);
         this.domain = new Domain(this);
+        this.contactProfile = new ContactProfile(this)
+        this.nameserverProfile = new NameserverProfile(this)
+        this.zoneProfile = new ZoneProfile(this)
+        this.folder = new Folder(this)
 
-        this.domain.check( 'appsynth.be', (err, res) => {
-            console.log(err.message)
-            console.log(res)
-        })
-
-        this.ip.list((err, res) => {
-            console.log(res)
-        })
     }
 
 };

@@ -21,11 +21,7 @@ class IP {
             '</request>'
 
         this.request(reqData, (err, res) => {
-            if (err) {
-                cb(err)
-            } else {
-                cb(null, this.ipListParser(res))
-            }
+            cb(err ? err : null, this.ipListParser(res))
         })
     }
 
@@ -41,11 +37,11 @@ class IP {
     add (ip, cb) {
 
         if (!ip || typeof ip === 'function') {
-            return cb(new Error('Please provide a proper IP address'))
+            return cb(new Error('Please provide an IP address'))
         }
 
         // Parse the IP address
-        if (!this.calidateIPaddress(ip)) return cb(new Error('Please provide a correct IP address'))
+        if (!this.validateIPaddress(ip)) return cb(new Error('Please provide a correct IP address'))
 
         const reqData =
             `<?xml version="1.0" encoding="UTF-8"?>
@@ -71,11 +67,11 @@ class IP {
     remove(ip, cb) {
 
         if (!ip || typeof ip === 'function') {
-            return cb(new Error('Please provide a proper IP address'))
+            return cb(new Error('Please provide an IP address'))
         }
 
         // Parse the IP address
-        if (!this.calidateIPaddress(ip)) return cb(new Error('Please provide a correct IP address'))
+        if (!this.validateIPaddress(ip)) return cb(new Error('Please provide a correct IP address'))
 
         const reqData = `
             <?xml version="1.0" encoding="UTF-8"?>
@@ -100,7 +96,7 @@ class IP {
     ipListParser(json) {
         let addresses = [];
 
-        if (json.list.address && json.list.address.length > 0) {
+        if (json && json.list.address && json.list.address.length > 0) {
             json.list.address.forEach(address => {
                 addresses.push(address.__text);
             })
