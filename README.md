@@ -26,30 +26,30 @@ const api = new EuroDNS(credentials)
 ## Functions yet implemented
 
 ### Agent
-- [agent.balance](#agent.balance)
+- [agent.balance](#agentbalance)
 ### IP
--  [ip.list](#ip.list)
-- [ip.add](#ip.add)
-- [ip.remove](#ip.remove)
+-  [ip.list](#iplist)
+- [ip.add](#ipadd)
+- [ip.remove](#ipremove)
 ### Top level domains
-- [tld.list](#tld.list)
-- [tld.detail](#tld.detail)
+- [tld.list](#tldlist)
+- [tld.detail](#tlddetail)
 ### Domain
-- [domain.check](#domain.check)
+- [domain.check](#domaincheck)
 ### Contact profile
-- [contactProfile.list](#contactprofile.list)
-- [contactProfile.add](#contactprofile.add)
-- [contactProfile.remove](#contactprofile.remove)
-- [contactProfile.detail](#contactprofile.detail)
+- [contactProfile.list](#contactprofilelist)
+- [contactProfile.add](#contactprofileadd)
+- [contactProfile.remove](#contactprofileremove)
+- [contactProfile.detail](#contactprofiledetail)
 ### Nameserver Profile
-- [nameserverProfile.list](#nameserverprofile.list)
+- [nameserverProfile.list](#nameserverprofilelist)
 ### Folder
-- [folder.list](#folder.list)
-- [folder.add](#folder.add)
-- [folder.remove](#folder.remove)
+- [folder.list](#folderlist)
+- [folder.add](#folderadd)
+- [folder.remove](#folderremove)
 ### Zone profile
-- [zoneProfile.list](#zoneprofile.list)
-- [zoneProfile.create](#zoneprofile.create)
+- [zoneProfile.list](#zoneprofilelist)
+- [zoneProfile.create](#zoneprofilecreate)
 
 ## Modules
 All modules are based on the structure that can be found no the [EuroDNS API page](https://agent.tryout-eurodns.com/)
