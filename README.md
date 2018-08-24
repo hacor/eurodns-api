@@ -23,6 +23,34 @@ const credentials = {
 const api = new EuroDNS(credentials)
 ```
 
+## Functions yet implemented
+
+### Agent
+- [agent.balance](#agent.balance)
+### IP
+-  [ip.list](#ip.list)
+- [ip.add](#ip.add)
+- [ip.remove](#ip.remove)
+### Top level domains
+- [tld.list](#tld.list)
+- [tld.detail](#tld.detail)
+### Domain
+- [domain.check](#domain.check)
+### Contact profile
+- [contactProfile.list](#contactprofile.list)
+- [contactProfile.add](#contactprofile.add)
+- [contactProfile.remove](#contactprofile.remove)
+- [contactProfile.detail](#contactprofile.detail)
+### Nameserver Profile
+- [nameserverProfile.list](#nameserverprofile.list)
+### Folder
+- [folder.list](#folder.list)
+- [folder.add](#folder.add)
+- [folder.remove](#folder.remove)
+### Zone profile
+- [zoneProfile.list](#zoneprofile.list)
+- [zoneProfile.create](#zoneprofile.create)
+
 ## Modules
 All modules are based on the structure that can be found no the [EuroDNS API page](https://agent.tryout-eurodns.com/)
 Every function needs a callback with the structure `(error, response)` and all the returned errors are of the `Error` type.
@@ -30,7 +58,7 @@ Every function needs a callback with the structure `(error, response)` and all t
 ### Agent
 The agent module
 
-#### Balance
+#### agent.balance
 Get the balance of your account.
 
 **Returns:** { currency: "EUR", amount: Number }
@@ -48,7 +76,7 @@ api.agent.balance((err, res) => {
 ### IP
 The IP module
 
-#### List
+#### ip.list
 Lists all the allowed IPs in your account
 
 **Returns:** `['ip1', 'ip2']`
@@ -63,7 +91,7 @@ api.ip.list((err, res) => {
 })
 ```
 
-#### Add
+#### ip.add
 Add an IP address to allow API access
 
 **Returns:** _nothing_
@@ -74,7 +102,7 @@ api.ip.add('10.1.0.1', (err) => {
 })
 ```
 
-#### Remove
+#### ip.remove
 Remove an IP address to disallow API access
 
 **Returns:** _nothing_
@@ -88,7 +116,7 @@ api.ip.remove('10.1.0.1', (err) => {
 ### Top level domains
 Actions for the top level domains
 
-#### List
+#### tld.list
 List all top level domains. Returns an array of all available top level domains
 
 **Returns:** `["com", "org", "net"]`
@@ -103,10 +131,83 @@ api.tld.list((err, res) => {
 })
 ```
 
-### Domains
+#### tld.detail
+Receive the details about a specific TLD
+
+**Returns:** { tldDetailObject } (see example)
+```javascript 1.5
+const tld = 'beer'
+api.tld.detail(tld, (err, res) => {
+    if (err) {
+        console.log(err)
+    } else {
+        console.log(res)
+        
+        /*
+        {
+                  name: 'BEER',
+                  category: 'NGTLD',
+                  minSubPeriod: 1,
+                  incSubPeriod: 1,
+                  maxSubPeriod: 10,
+                  minRenPeriod: 1,
+                  incRenPeriod: 1,
+                  maxRenPeriod: 9,
+                  dayRenBeforeExpiration: 5,
+                  minCharAllowed: 3,
+                  maxCharAllowed: 63,
+                  hyphenAllowed: true,
+                  numberAllowed: true,
+                  localOCRequired: false,
+                  localACRequired: false,
+                  localTCRequired: false,
+                  localBCRequired: false,
+                  setupFee: 'N/A',
+                  annualFee: 24,
+                  modificationFee: 0,
+                  tradeEnabled: false,
+                  transferEnabled: true,
+                  transferOutEnabled: true,
+                  updateEnabled: true,
+                  updateOContactAllowed: true,
+                  updateAContactAllowed: true,
+                  updateTContactAllowed: true,
+                  updateBContactAllowed: true,
+                  updateLicenseeNeedTrade: false,
+                  tradeFee: 'N/A',
+                  tradeRequired: false,
+                  tradeRequiredForFields: 'NONE',
+                  transferFee: 24,
+                  transferAddYear: false,
+                  transferNeedAuthCode: true,
+                  transferTradeEnabled: false,
+                  restricted: false,
+                  lockingEnabled: true,
+                  dnsSec: false,
+                  idn: true,
+                  needAdditionalInfoNew: true,
+                  needAdditionalInfoUpdate: false,
+                  needAdditionalInfoTransfer: false,
+                  needAdditionalInfoTrade: false,
+                  needAdditionalInfoSunrise: true,
+                  transferNeedSignedDoc: false,
+                  updateNsAllowed: true,
+                  renewalMethod: 'AUTORENEW',
+                  renewalFee: 24,
+                  needContactValidation: true,
+                  reactivateEnabled: true,
+                  reactivateFee: 0,
+                  claims: false
+              }
+         */
+    }
+})
+```
+
+### Domain
 Actions for a domain
 
-#### Check
+#### domain.check
 Check if a domain name is available. You can use a string or an array to check multiple domains at once. This function always returns an array.
 
 **Returns:** `[{ available: Boolean, domain: Domainname}]`
@@ -122,10 +223,10 @@ api.domain.check('example.com', (err, res) => {
 ```
 
 
-### Contact Profiles
+### Contact Profile
 Actions for the contact profiles
 
-#### List
+#### contactProfile.list
 List all the available contact profiles of your account
 
 **Returns:** `[{ name: 'profileName', id: 'profileID', type: 'profileType' }]`
@@ -140,7 +241,7 @@ api.contactProfile.list((err, res) => {
 })
 ```
 
-#### Add
+#### contactProfile.add
 Add a new profile to your account
 
 **Returns:** `{ id: 'theNewProfileId'}`
@@ -172,7 +273,7 @@ api.contactProfile.add(profile, (err, res) => {
 })
 ```
 
-#### Remove
+#### contactProfile.remove
 Remove a contact profile from your account
 
 ```javascript 1.5
@@ -187,7 +288,7 @@ api.contactProfile.remove(profileId, (err) => {
 })
 ```
 
-#### Detail
+#### contactProfile.detail
 Gives the details about a specific profile
 
 **Returns:** `{ profileObject }`
@@ -222,15 +323,15 @@ api.contactProfile.detail(profileId, (err, res) => {
 })
 ```
 
-### Nameserver profiles
+### Nameserver profile
 
-#### List
+#### nameserverProfile.list
 List all the nameserver profiles in your account
 
 
-### Folders
+### Folder
 
-#### List
+#### folder.list
 Lists all the folders in your account
 
 **Returns:** `[{name: 'foldername', id: 'folderId', subFolders: [Array of subfolders]]`
@@ -244,7 +345,7 @@ this.folder.list( (err, res) => {
 })
 ```
 
-#### Add
+#### folder.add
 Add a new folder to your API account
 
 **Returns:** `{ id: 'folderId' }`
@@ -263,7 +364,7 @@ api.folder.add(params, (err, res) => {
 })
 ```
 
-#### Remove
+#### folder.remove
 Removes a folder from your API account
 
 **Returns:** _nothing_
@@ -279,9 +380,9 @@ api.folder.remove(folderId, (err) => {
 })
 ```
 
-### Zone Profiles
+### Zone Profile
 
-#### List
+#### zoneProfile.list
 List all the available zone profiles in your account
 
 TODO:: returns...
@@ -296,7 +397,7 @@ api.zoneProfile.list((err, res) => {
 })
 ```
 
-#### Create
+#### zoneProfile.create
 Create a new zone profile.
 Read https://agent.tryout-eurodns.com/documentation/http/zoneprofile/create/ to find out what all the fields mean and when they are needed
 

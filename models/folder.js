@@ -49,7 +49,6 @@ class Folder {
      */
     parseFolderdata(folder) {
 
-        console.log(folder)
         let folderStructure = {
             name: folder.name.__text,
             id: folder.id.__text,
