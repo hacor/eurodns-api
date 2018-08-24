@@ -35,7 +35,7 @@ Get the balance of your account.
 
 **Returns:** { currency: "EUR", amount: Number }
 
-```ecmascript 6
+```javascript 1.5
 api.agent.balance((err, res) => {
     if (err) {
         console.log(err)
@@ -53,7 +53,7 @@ Lists all the allowed IPs in your account
 
 **Returns:** `['ip1', 'ip2']`
 
-```ecmascript 6
+```javascript 1.5
 api.ip.list((err, res) => {
     if (err) {
         console.log(err)
@@ -68,7 +68,7 @@ Add an IP address to allow API access
 
 **Returns:** _nothing_
 
-```ecmascript 6
+```javascript 1.5
 api.ip.add('10.1.0.1', (err) => {
     if (err) console.log(err)
 })
@@ -79,7 +79,7 @@ Remove an IP address to disallow API access
 
 **Returns:** _nothing_
 
-```ecmascript 6
+```javascript 1.5
 api.ip.remove('10.1.0.1', (err) => {
     if (err) console.log(err)
 })
@@ -93,7 +93,7 @@ List all top level domains. Returns an array of all available top level domains
 
 **Returns:** `["com", "org", "net"]`
 
-```ecmascript 6
+```javascript 1.5
 api.tld.list((err, res) => {
     if (err) {
         console.log(err)
@@ -111,7 +111,7 @@ Check if a domain name is available. You can use a string or an array to check m
 
 **Returns:** `[{ available: Boolean, domain: Domainname}]`
 
-```ecmascript 6
+```javascript 1.5
 api.domain.check('example.com', (err, res) => {
     if (err) {
         console.log(err)
@@ -130,7 +130,7 @@ List all the available contact profiles of your account
 
 **Returns:** `[{ name: 'profileName', id: 'profileID', type: 'profileType' }]`
 
-```ecmascript 6
+```javascript 1.5
 api.contactProfile.list((err, res) => {
     if (err) {
         console.log(err)
@@ -145,7 +145,7 @@ Add a new profile to your account
 
 **Returns:** `{ id: 'theNewProfileId'}`
 
-```ecmascript 6
+```javascript 1.5
 // All commented properties are optional
 const profile= {
     name: 'AppSynth',
@@ -175,7 +175,7 @@ api.contactProfile.add(profile, (err, res) => {
 #### Remove
 Remove a contact profile from your account
 
-```ecmascript 6
+```javascript 1.5
 const profileId = 'yourProfileId'
 
 api.contactProfile.remove(profileId, (err) => {
@@ -191,7 +191,7 @@ api.contactProfile.remove(profileId, (err) => {
 Gives the details about a specific profile
 
 **Returns:** `{ profileObject }`
-```ecmascript 6
+```javascript 1.5
 const profileId = 'yourProfileId'
 
 api.contactProfile.detail(profileId, (err, res) => {
@@ -227,13 +227,14 @@ api.contactProfile.detail(profileId, (err, res) => {
 #### List
 List all the nameserver profiles in your account
 
+
 ### Folders
 
 #### List
 Lists all the folders in your account
 
 **Returns:** `[{name: 'foldername', id: 'folderId', subFolders: [Array of subfolders]]`
-```ecmascript 6
+```javascript 1.5
 this.folder.list( (err, res) => {
     if (err) {
         console.log(err.message)
@@ -247,7 +248,7 @@ this.folder.list( (err, res) => {
 Add a new folder to your API account
 
 **Returns:** `{ id: 'folderId' }`
-```ecmascript 6
+```javascript 1.5
 const params = {
     name: 'newFolder',
     parentId: 98 // This field is only needed for subfolders
@@ -266,7 +267,7 @@ api.folder.add(params, (err, res) => {
 Removes a folder from your API account
 
 **Returns:** _nothing_
-```ecmascript 6
+```javascript 1.5
 const folderId = '101'
 
 api.folder.remove(folderId, (err) => {
@@ -277,4 +278,60 @@ api.folder.remove(folderId, (err) => {
     }
 })
 ```
+
+### Zone Profiles
+
+#### List
+List all the available zone profiles in your account
+
+TODO:: returns...
+
+```javascript 1.5
+api.zoneProfile.list((err, res) => {
+    if (err) {
+        console.log(err)
+    } else {
+        console.log(res)
+    }
+})
+```
+
+#### Create
+Create a new zone profile.
+Read https://agent.tryout-eurodns.com/documentation/http/zoneprofile/create/ to find out what all the fields mean and when they are needed
+
+```javascript 1.5
+// This just shows all available fields
+const zone = {
+    name: 'someZone',
+    records: [
+        {
+            type: 'A',
+            redirectionType: '',
+            newUrl: '',
+            source: '',
+            destination: '',
+            host: '',
+            data: '',
+            ttl: 60,
+            mxPriority: 10,
+            refresh: 60,
+            retry: 60,
+            expire: 600,
+            minimum: 60,
+            serial: 60,
+            weight: 60,
+            port: 80
+        }
+    ]
+}
+api.zoneProfile.create(zone, (err, res) => {
+    if (err) {
+        console.log(err)
+    } else {
+        console.log(res)
+    }
+})
+```
+
 
