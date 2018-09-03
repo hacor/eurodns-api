@@ -16,7 +16,7 @@ const EuroDNS = require('eurodns-api')
 const credentials = {
     user: 'YourUserName',
     password: 'Your password',
-    mode: 'development', // Can be development or production, development is the default
+    mode: 'development' // Can be development or production, development is the default
     //uri: '' // The URL of the API server (normally the API takes this by itself)
 }
 
@@ -36,18 +36,21 @@ const api = new EuroDNS(credentials)
 - [tld.detail](#tlddetail)
 ### Domain
 - [domain.check](#domaincheck)
+- [domain.create](#domaincreate)
 ### Contact profile
 - [contactProfile.list](#contactprofilelist)
 - [contactProfile.add](#contactprofileadd)
 - [contactProfile.remove](#contactprofileremove)
 - [contactProfile.detail](#contactprofiledetail)
 ### Nameserver Profile
+*Only works in production mode*
 - [nameserverProfile.list](#nameserverprofilelist)
 ### Folder
 - [folder.list](#folderlist)
 - [folder.add](#folderadd)
 - [folder.remove](#folderremove)
 ### Zone profile
+*Only works in productino mode*
 - [zoneProfile.list](#zoneprofilelist)
 - [zoneProfile.create](#zoneprofilecreate)
 
@@ -222,6 +225,10 @@ api.domain.check('example.com', (err, res) => {
 })
 ```
 
+#### domain.create
+Register a domain using the EuroDNS API: https://agent.api-eurodns.com/documentation/http/domain/create/information.php
+
+**Returns** `{ domain: String, roId: String }`
 
 ### Contact Profile
 Actions for the contact profiles

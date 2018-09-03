@@ -8,8 +8,7 @@ class NameserverProfile {
     /**
      * Lists all the nameservers in your account
      *
-     * TODO:: Doesn't seem to work! Returns a 2301 status code
-     * [Module [Nameserverprofile:list] does not exist]
+     * IMPORTANT:: Works only in production environments
      * @param cb
      */
     list (cb) {
