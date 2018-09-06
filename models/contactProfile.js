@@ -1,3 +1,5 @@
+const contact = require('./../helpers/contact')
+
 class ContactProfile {
 
     constructor (api) {
@@ -73,7 +75,7 @@ class ContactProfile {
      * @param cb                    Function    Required        The callback function
      * @return  ID                  String                      The ID of the profile
      */
-    add (profile, cb) {
+    create (profile, cb) {
 
         if (!profile.name) return cb(new Error('Provide a profile name'))
         if (!profile.firstName) return cb(new Error('Provide a firstName variable'))
@@ -91,18 +93,7 @@ class ContactProfile {
                 <contactprofile:create>
                     <contactprofile:name>${profile.name}</contactprofile:name>
                     <contactprofile:contact>
-                        <contact:firstname>${profile.firstName}</contact:firstname>
-                        <contact:lastname>${profile.lastName}</contact:lastname>
-                        ${profile.company ? '<contact:company>' + profile.company + '</contact:company>' : '' }
-                        <contact:address1>${profile.addressLine1}</contact:address1>
-                        ${profile.addressLine2 ? '<contact:address2>' +  profile.addressLine2 + '</contact:address2>': ''}
-                        ${profile.addressLine3 ? '<contact:address3>' +  profile.addressLine3 + '</contact:address3>' : ''}
-                        <contact:city>${profile.city}</contact:city>
-                        <contact:zipcode>${profile.postalCode}</contact:zipcode>
-                        <contact:country_code>${profile.countryCode}</contact:country_code>
-                        <contact:email>${profile.email}</contact:email>
-                        <contact:phone>${profile.phone}</contact:phone>
-                        ${profile.fax ? '<contact:fax>' +  profile.fax + '</contact:fax>' : ''}
+                        ${contact.contactToXML(profile)}
                     </contactprofile:contact>
                 </contactprofile:create>
             </request>`
@@ -161,35 +152,16 @@ class ContactProfile {
             </request>`
 
         this.request(reqData, (err, res) => {
-            cb(err ? err : null, this.parseProfile(res))
+
+            if (err) return cb(err)
+
+            const result = contact.contactToJson(res.contact)
+
+            // Add the profileName to the contact info
+            result.name = res.name.__text
+
+            cb(null, result)
         })
-    }
-
-    /**
-     * Creates a profile object after the XML2JS transmission
-     * @param profile
-     * @return {{name: *, firstName: *, lastName: *, phone: *, street: *, city: *, postalCode: *, countryCode: *}}
-     */
-    parseProfile(profile) {
-        let parsedProfile = {
-            name: profile.name.__text,
-            firstName: profile.contact.postalInfo.firstname.__text,
-            lastName: profile.contact.postalInfo.lastname.__text,
-            phone: profile.contact.postalInfo.voice.__text,
-            street: profile.contact.postalInfo.addr.street.__text,
-            city: profile.contact.postalInfo.addr.city.__text,
-            postalCode: profile.contact.postalInfo.addr.pc.__text,
-            countryCode: profile.contact.postalInfo.addr.cc.__text
-        }
-
-        // Parse optional values
-        if (profile.contact.postalInfo.org && profile.contact.postalInfo.org.__text)
-            parsedProfile.company = profile.contact.postalInfo.org.__text
-
-        if (profile.contact.postalInfo.fax && profile.contact.postalInfo.fax.__text)
-            parsedProfile.fax = profile.contact.postalInfo.fax.__text
-
-        return parsedProfile;
     }
 }
 

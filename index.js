@@ -90,52 +90,7 @@ class euroDNSAPI {
         this.zoneProfile = new ZoneProfile(this)
         this.folder = new Folder(this)
 
-        /*this.folder.add({name: 'test2', parentId: 98}, (err, res) => {
-            if (err) console.log(err.message)
-
-            console.log(res)
-        })
-        this.folder.add({name: 'test3', parentId: 98}, (err, res) => {
-            if (err) console.log(err.message)
-
-            console.log(res)
-        })
-        this.folder.add({name: 'appsynth'}, (err, res) => {
-            if (err) console.log(err.message)
-
-            console.log(res)
-        })*/
-        /*this.folder.remove('101', (err) => {
-            if (err) {
-                console.log(err)
-            } else {
-                console.log('removed folder successfully')
-            }
-        })*/
-
-        /*const zone = {
-            name: 'www',
-            records: [{
-                type: 'A',
-                host: '@',
-                data: '10.1.1.1'
-            }]
-        }
-
-        this.zoneProfile.create(zone, (err, res) => {
-            if (err) console.log(err.message)
-
-            console.log(res)
-        })*/
-
-        this.tld.detail('beer', (err, res) => {
-            if (err) console.log(err.message)
-
-            console.log(res)
-        })
-
-
-    }
+     }
 
 };
 

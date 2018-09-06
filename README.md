@@ -39,7 +39,7 @@ const api = new EuroDNS(credentials)
 - [domain.create](#domaincreate)
 ### Contact profile
 - [contactProfile.list](#contactprofilelist)
-- [contactProfile.add](#contactprofileadd)
+- [contactProfile.create](#contactprofilecreate)
 - [contactProfile.remove](#contactprofileremove)
 - [contactProfile.detail](#contactprofiledetail)
 ### Nameserver Profile
@@ -146,63 +146,63 @@ api.tld.detail(tld, (err, res) => {
     } else {
         console.log(res)
         
-        /*
-        {
-                  name: 'BEER',
-                  category: 'NGTLD',
-                  minSubPeriod: 1,
-                  incSubPeriod: 1,
-                  maxSubPeriod: 10,
-                  minRenPeriod: 1,
-                  incRenPeriod: 1,
-                  maxRenPeriod: 9,
-                  dayRenBeforeExpiration: 5,
-                  minCharAllowed: 3,
-                  maxCharAllowed: 63,
-                  hyphenAllowed: true,
-                  numberAllowed: true,
-                  localOCRequired: false,
-                  localACRequired: false,
-                  localTCRequired: false,
-                  localBCRequired: false,
-                  setupFee: 'N/A',
-                  annualFee: 24,
-                  modificationFee: 0,
-                  tradeEnabled: false,
-                  transferEnabled: true,
-                  transferOutEnabled: true,
-                  updateEnabled: true,
-                  updateOContactAllowed: true,
-                  updateAContactAllowed: true,
-                  updateTContactAllowed: true,
-                  updateBContactAllowed: true,
-                  updateLicenseeNeedTrade: false,
-                  tradeFee: 'N/A',
-                  tradeRequired: false,
-                  tradeRequiredForFields: 'NONE',
-                  transferFee: 24,
-                  transferAddYear: false,
-                  transferNeedAuthCode: true,
-                  transferTradeEnabled: false,
-                  restricted: false,
-                  lockingEnabled: true,
-                  dnsSec: false,
-                  idn: true,
-                  needAdditionalInfoNew: true,
-                  needAdditionalInfoUpdate: false,
-                  needAdditionalInfoTransfer: false,
-                  needAdditionalInfoTrade: false,
-                  needAdditionalInfoSunrise: true,
-                  transferNeedSignedDoc: false,
-                  updateNsAllowed: true,
-                  renewalMethod: 'AUTORENEW',
-                  renewalFee: 24,
-                  needContactValidation: true,
-                  reactivateEnabled: true,
-                  reactivateFee: 0,
-                  claims: false
-              }
-         */
+/*
+    {
+          name: 'BEER',
+          category: 'NGTLD',
+          minSubPeriod: 1,
+          incSubPeriod: 1,
+          maxSubPeriod: 10,
+          minRenPeriod: 1,
+          incRenPeriod: 1,
+          maxRenPeriod: 9,
+          dayRenBeforeExpiration: 5,
+          minCharAllowed: 3,
+          maxCharAllowed: 63,
+          hyphenAllowed: true,
+          numberAllowed: true,
+          localOCRequired: false,
+          localACRequired: false,
+          localTCRequired: false,
+          localBCRequired: false,
+          setupFee: 'N/A',
+          annualFee: 24,
+          modificationFee: 0,
+          tradeEnabled: false,
+          transferEnabled: true,
+          transferOutEnabled: true,
+          updateEnabled: true,
+          updateOContactAllowed: true,
+          updateAContactAllowed: true,
+          updateTContactAllowed: true,
+          updateBContactAllowed: true,
+          updateLicenseeNeedTrade: false,
+          tradeFee: 'N/A',
+          tradeRequired: false,
+          tradeRequiredForFields: 'NONE',
+          transferFee: 24,
+          transferAddYear: false,
+          transferNeedAuthCode: true,
+          transferTradeEnabled: false,
+          restricted: false,
+          lockingEnabled: true,
+          dnsSec: false,
+          idn: true,
+          needAdditionalInfoNew: true,
+          needAdditionalInfoUpdate: false,
+          needAdditionalInfoTransfer: false,
+          needAdditionalInfoTrade: false,
+          needAdditionalInfoSunrise: true,
+          transferNeedSignedDoc: false,
+          updateNsAllowed: true,
+          renewalMethod: 'AUTORENEW',
+          renewalFee: 24,
+          needContactValidation: true,
+          reactivateEnabled: true,
+          reactivateFee: 0,
+          claims: false
+      }
+ */
     }
 })
 ```
@@ -229,6 +229,174 @@ api.domain.check('example.com', (err, res) => {
 Register a domain using the EuroDNS API: https://agent.api-eurodns.com/documentation/http/domain/create/information.php
 
 **Returns** `{ domain: String, roId: String }`
+```javascript
+const domain = {
+    name: 'appsynth6.be',
+    subscriptionPeriod: 0,
+    renewalPeriod: 'autorenew',
+    //folderId: 'id',
+    //nameserverProfileId: 'id',
+    //zoneProfileId: 'id',
+    //nameservers: [   // If no nameservers array AND no nameserverProfileId, we use the default EuroDNS nameservers
+    //    {
+    //        priority: 0,
+    //        fqdn: 'ns.example.com',
+    //        ip: '10.10.10.1'
+    //    }],
+    contacts: [
+        // All 4 types are required!
+        {
+            type: 'admin',
+            profileId: '500565544'
+            // If you don't have a profile ID, you specify the contact as explaned in contactProfile.add
+        },{
+            type: 'billing',
+            profileId: '500565544'
+        },{
+            type: 'tech',
+            profileId: '500565544',
+        }, {
+            type: 'org',
+            profileId: '500565544'
+        }
+    ],
+    //claim: { // The claim object is completely optional
+    //    noticeId: 'id'
+    //    key: 'key,
+    //    accepted: '00111100' //accepted dat (epoch time)
+    //    ip: '10.10.10.1' // Client IP address
+    //},
+    //whoisPrivacy: false
+}
+
+api.domain.create(domain, (err, res) => {
+    if (err) console.log(err.message)
+
+    console.log(res)
+})
+```
+
+#### domain.renew
+Renew an existing domain in your account
+
+**Returns:** _nothing_
+```javascript
+const domain = {
+    name: 'appsynth.be',
+    period: 1
+}
+
+api.domain.renew(domain, (err, res) => {
+    if (err) console.log(err.message)
+
+    console.log(res)
+})
+```
+
+#### domain.setRenewalMode
+Sets the renewal mode for a domain in your account
+
+**Returns:** _nothing_
+```javascript
+const domain = {
+    name: 'appsynth.be',
+    autorenew: true         // When this value is not provided or false, the sevrer uses 'autoexpire'
+}
+
+api.domain.setRenewalMode(domain, (err, res) => {
+    if (err) console.log(err.message)
+
+    console.log(res)
+})
+``` 
+
+#### domain.list
+List all the domains in your account
+
+**Returns:** [ 'example1.com', 'example2.com',...]
+
+```javascript
+const domain = {
+    //name: '.be',
+    //folderId: 'id',
+    //status: 'registered' OR 'quarantined'
+}
+
+api.domain.list(domain, (err, res) => {
+    if (err) console.log(err.message)
+
+    console.log(res)
+})
+```
+
+#### domain.info
+Outputs the info of a specific domain
+
+**Returns:** `{ domainInfoObject }`
+```javascript
+api.domain.info('appsynth.be', (err, res) => {
+    if (err) console.log(err.message)
+
+    console.log(res)
+    
+    /**
+    * Should show something like:
+    * {
+          "domain": "appsynth6.be",
+          "roId": "D513320529-BE",
+          "status": {
+              "code": "1000",
+              "text": "Registered"
+          },
+          "renewal": "autoRenew",
+          "contact": [
+              {
+                  "type": "org",
+                  "id": "CDO513308184"
+              },
+              {
+                  "type": "billing",
+                  "id": "CDB513308184"
+              },
+              {
+                  "type": "tech",
+                  "id": "CDT513308184"
+              },
+              {
+                  "type": "admin",
+                  "id": "CDA513308184"
+              }
+          ],
+          "pending": "no",
+          "created": "2018-09-05T00:00:00.000Z",
+          "updated": "2018-09-05T00:00:00.000Z",
+          "expires": "2019-09-02T00:00:00.000Z",
+          "nameservers": [
+              {
+                  "fqdn": "ns1.eurodns.com",
+                  "ip": "80.92.65.2"
+              },
+              {
+                  "fqdn": "ns2.eurodns.com",
+                  "ip": "80.92.89.242"
+              },
+              {
+                  "fqdn": "ns3.eurodns.com",
+                  "ip": "80.92.95.42"
+              },
+              {
+                  "fqdn": "ns4.eurodns.com",
+                  "ip": "192.174.68.100"
+              }
+          ],
+          "contactValidated": false,
+          "whoisPrivacy": false
+      }*/
+})
+```
+
+#### domain.update
+Update a domain in your account. Currently the `dnssec` extension is unsupported!
 
 ### Contact Profile
 Actions for the contact profiles
@@ -248,7 +416,7 @@ api.contactProfile.list((err, res) => {
 })
 ```
 
-#### contactProfile.add
+#### contactProfile.create
 Add a new profile to your account
 
 **Returns:** `{ id: 'theNewProfileId'}`
