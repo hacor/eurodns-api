@@ -45,8 +45,9 @@ module.exports.update = function (nameservers) {
 
 /**
  * This function returns an XML object of multiple nameserver:create fields
+ * If no param is provided, the default EuroDNS nameservers will be used (see definition on top of this file)
  *
- * @param   nameservers       Array       Required        The nameservers array
+ * @param   nameservers       Array       Optional         The nameservers array
  *          nameserver.fqdn
  *          nameserver.ip
  *          nameserver.priority
