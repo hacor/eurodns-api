@@ -24,7 +24,7 @@
  *
  * @param contact a contact object
  */
-module.exports.contactToXML = function (contact) {
+const contactToXML = function (contact) {
 
     // If a contact.profileId field is provided, it will return a basic contact
     if (contact.profileId && contact.profileId !== '') {
@@ -54,7 +54,7 @@ module.exports.contactToXML = function (contact) {
  * @param contact       Required    Object      An xml2js contact object
  * @returns {{name: *, firstName: *, lastName: *, phone: *, street: *, city: *, postalCode: *, countryCode: *}}
  */
-module.exports.contactToJson = function (contact) {
+const contactToJson = function (contact) {
     let contactInfo = {
         firstName: contact.postalInfo.firstname.__text,
         lastName: contact.postalInfo.lastname.__text,
@@ -82,22 +82,22 @@ module.exports.contactToJson = function (contact) {
  *
  * @param contacts      REQUIRED    Array   An array of contacts object
  */
-module.exports.create = function (contacts) {
+const create = function (contacts) {
 
-    let xml = '<contact:create>'
+    let xml = ''
 
     if (contacts && contacts.length > 0) {
         contacts.forEach( contact => {
+            xml+= '<contact:create>'
             xml += contactToXML(contact)
+            xml += '</contact:create>'
         })
     }
-
-    xml += '</contact:create>'
 
     return xml
 }
 
-module.exports.update = function (contacts) {
+const update = function (contacts) {
     let xml = '<contact:update>'
 
     if (contacts && contacts.length > 0) {
@@ -120,7 +120,7 @@ module.exports.update = function (contacts) {
  * @param contacts      Required    Array   The xml2js array of a contact list
  * @returns {Array}
  */
-module.exports.parseContactIds = function (contacts) {
+const parseContactIds = function (contacts) {
 
     let contactJson = []
 
@@ -135,3 +135,9 @@ module.exports.parseContactIds = function (contacts) {
 
     return contactJson
 }
+
+module.exports.contactToXML = contactToXML
+module.exports.contactToJson = contactToJson
+module.exports.create = create
+module.exports.update = update
+module.exports.parseContactIds = parseContactIds

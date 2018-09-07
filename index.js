@@ -15,7 +15,7 @@ const ContactProfile = require('./models/contactProfile')
 const NameserverProfile = require('./models/nameserverProfile')
 const ZoneProfile = require('./models/zoneProfile')
 const Folder = require('./models/folder')
-const Zones = require('./model/zones')
+const Zones = require('./models/zones')
 
 /**
  * This is the main class containing all parameters
@@ -90,7 +90,7 @@ class euroDNSAPI {
         this.nameserverProfile = new NameserverProfile(this)
         this.zoneProfile = new ZoneProfile(this)
         this.folder = new Folder(this)
-        this.zones = new Zones(api)
+        this.zones = new Zones(this)
 
      }
 

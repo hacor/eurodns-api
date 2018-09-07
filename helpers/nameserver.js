@@ -28,8 +28,10 @@ const defaultNameservers = [
  *          nameservers.ip
  * @returns {string}
  */
-module.exports.update = function (nameservers) {
+const update = function (nameservers) {
     let returnData = ''
+
+    if (!nameservers) nameservers = []
 
     nameservers.forEach( ns => {
         returnData +=
@@ -53,7 +55,7 @@ module.exports.update = function (nameservers) {
  *          nameserver.priority
  * @returns {string}
  */
-module.exports.create = function (nameservers) {
+const create = function (nameservers) {
     let xml = ''
 
     // No nameservers provided using the default ones
@@ -72,24 +74,6 @@ module.exports.create = function (nameservers) {
     return xml
 }
 
-module.exports.update = function (nameservers) {
-    let xml = ''
-
-    if (!nameservers || nameservers.length === 0) nameservers = []
-
-    nameservers.forEach( ns => {
-        xml +=
-            `<nameserver:update>
-                <nameserver:priority>${ns.priority ? ns.priority : ''}</nameserver:priority>
-                <nameserver:fqdn>${ns.fqdn ? ns.fqdn : ''}</nameserver:fqdn>
-                <nameserver:ipaddr>${ns.ip ? ns.ip : ''}</nameserver:ipaddr>
-            </nameserver:update>`
-    })
-
-    return xml
-}
-
-
 /**
  * This function generates a correct JSON array of a xml2js nameserver list
  * Returns:
@@ -100,7 +84,7 @@ module.exports.update = function (nameservers) {
  * @param nameservers       Required    Array   The array returned by xml2js
  * @returns {Array}
  */
-module.exports.nsToJson = function (nameservers) {
+const nsToJson = function (nameservers) {
     const result = []
 
     if (nameservers && nameservers.length > 0) {
@@ -114,3 +98,7 @@ module.exports.nsToJson = function (nameservers) {
 
     return result
 }
+
+module.exports.update = update
+module.exports.create = create
+module.exports.nsToJson = nsToJson

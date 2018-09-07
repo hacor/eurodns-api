@@ -17,18 +17,39 @@ class Zones {
      */
     list (tld, cb) {
 
+        if (!tld || typeof tld === 'function') {
+            cb = tld;
+        }
+
         const reqData =
             `<?xml version="1.0" encoding="UTF-8"?>
             <request xmlns:zone="http://www.eurodns.com/zone">
                 <zone:list>
-                    ${tld ? '<zone:tld>' + tld + '</zone:tld>' : ''}
+                    ${tld && typeof tld !== 'function' ? '<zone:tld>' + tld + '</zone:tld>' : ''}
                 </zone:list>
             </request>`
 
         this.request(reqData, (err, res) => {
             if (err) return cb(err)
 
-            cb(null, res)
+            let result = []
+
+            if (res.list && res.list.name) {
+                // We have results!
+
+                if (res.list.name.length > 0) {
+                    // Seems we have an array of domains
+                    res.list.name.forEach( zone => {
+                        result.push(zone.__text)
+                    })
+                } else {
+                    // We should have a single domain
+                    result.push(res.list.name.__text)
+                }
+
+            }
+
+            cb(null, result)
         })
     }
 
@@ -97,7 +118,7 @@ class Zones {
 
         const reqData =
             `<?xml version="1.0" encoding="UTF-8"?>
-            <request xmlns:zone="http://www.eurodns.com/zone">
+            <request xmlns:zone="http://www.eurodns.com/zone" xmlns:record="http://www.eurodns.com/record">
                 <zone:update>
                     <zone:name>${zone.name}</zone:name>
                     <zone:records>
@@ -105,6 +126,8 @@ class Zones {
                     </zone:records>
                 </zone:update>
             </request>`
+
+        console.log(reqData)
 
         this.request(reqData, (err, res) => {
             if (err) return cb(err)
@@ -135,7 +158,46 @@ class Zones {
         this.request(reqData, (err, res) => {
             if (err) return cb(err)
 
-            cb(null, res)
+            const result = {
+                name: res.name.__text,
+                records: records.recordsToJson(res.records.record)
+            }
+
+            cb(null, result)
+        })
+    }
+
+
+    /**
+     * Check the nameservers for the specified zone
+     *
+     * @param zone      Required        String      The zone to check
+     * @param cb
+     * @returns {*}                     Object      { name: 'zone', check: 'success/failed', reason: '', code: '' }
+     */
+    nsCheck (zone, cb) {
+        if (!zone || typeof zone === 'function') return cb(new Error('You must specify a zone to check'))
+
+        const reqData = `<?xml version="1.0" encoding="UTF-8"?>
+                        <request xmlns:zone="http://www.eurodns.com/zone">
+                            <zone:nscheck>
+                                <zone:name>${zone}</zone:name>
+                            </zone:nscheck>
+                        </request>`
+
+        this.request(reqData, (err, res) => {
+            if (err) return cb(err)
+
+            const result = {}
+
+            if (res.check && res.check.cd && res.check.cd.name) {
+                result.name = res.check.cd.name.__text
+                result.check = res.check.cd.name._check
+                result.reason = res.check.cd.reason.__text
+                result.code = res.check.cd.reason._code
+            }
+
+            cb(null, result)
         })
     }
 
@@ -161,6 +223,9 @@ class Zones {
     updateRecordsXml (zoneRecords) {
 
         let xml = ''
+
+        // Check whether it is an array
+        if (zoneRecords && zoneRecords.action) zoneRecords = [ zoneRecords ]
 
         if (zoneRecords && zoneRecords.length > 0) {
             // Loop through the record array
@@ -194,8 +259,6 @@ class Zones {
 
         return xml;
     }
-
-
 
 }
 

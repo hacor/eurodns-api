@@ -218,6 +218,9 @@ class Domain {
 
 
     list (domain, cb) {
+
+        if (!domain || typeof domain === 'function') cb = domain;
+
         const reqData =
             `<?xml version="1.0" encoding="UTF-8"?>
             <request xmlns:domain="http://www.eurodns.com/domain">
@@ -315,7 +318,7 @@ class Domain {
         if (domain.nameserverProfileId && domain.nameservers && domain.nameservers.length > 0) return cb(new Error('Seems you provided a Nameservers array AND a nameservprofileId. This is not accepted'))
         if (domain.nameservers && domain.nameservers.length > 0) {
             domain.nameservers.forEach( nameserver => {
-                if (!nameserver.priority || !nameserver.fqdn || !nameserver.ip) return cb(new Error('Each nameserver must have a priority, fqdn and ip field!'))
+                if (!((nameserver.priority || nameserver.priority === 0)  && nameserver.priority === parseInt(nameserver.priority)) || !nameserver.fqdn || !nameserver.ip) return cb(new Error('Each nameserver must have a priority, fqdn and ip field!'))
             })
         }
 
@@ -327,6 +330,7 @@ class Domain {
                 xmlns:domain="http://www.eurodns.com/domain"
                 xmlns:nameserver="http://www.eurodns.com/nameserver"
                 xmlns:nameserverprofile="http://www.eurodns.com/nameserverprofile"
+                xmlns:contact="http://www.eurodns.com/contact"
                 xmlns:zoneprofile="http://www.eurodns.com/zoneprofile">
                 <domain:update>
                     <domain:name>${domain.name}</domain:name>
@@ -338,12 +342,12 @@ class Domain {
                 ${nameserver.update(domain.nameservers)}
                 ${contact.update(domain.contacts)}
                 
-                <extension:create>
-                    <extension:service>
-                        <service:domainprivacy>${domain.whoisPrivacy ? 'Yes': 'No'}</service:domainprivacy>
-                    </extension:service>
-                </extension:create>
-            </request>`
+                ${'whoisPrivacy' in domain ? '<extension:create>\n' +
+                '                    <extension:service>\n' +
+                '                        <service:domainprivacy>' + (domain.whoisPrivacy ? 'Yes' : 'No')  + '</service:domainprivacy>\n' +
+                '                    </extension:service>\n' +
+                '                </extension:create>\n' : '' }
+                </request>`
 
         this.request(reqData, (err, res) => {
             if (err) return cb(err)

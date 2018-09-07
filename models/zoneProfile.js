@@ -1,3 +1,5 @@
+const record = require('./../helpers/records')
+
 class ZoneProfile {
     constructor (api) {
         this.x2js = api.x2js;
@@ -13,7 +15,29 @@ class ZoneProfile {
             </request>`
 
         this.request(reqData, (err, res) => {
-            cb(err ? err : null, res)
+
+            if (err) return cb(err)
+
+            let profiles = []
+
+            if (res.list && res.list.name && res.list.name._id) {
+                // The list seems to be a single object
+                profiles.push({
+                    name: res.list.name.__text,
+                    id: res.list.name._id
+                })
+            } else {
+                // The list seems to be an array
+                if (res.list && res.list.name && res.list.name.length > 0) {
+                    res.list.name.forEach( profile => {
+                        profiles.push({
+                            name: profile.__text,
+                            id: profile._id
+                        })
+                    })
+                }
+            }
+            cb(null, profiles)
         })
     }
 
@@ -66,9 +90,77 @@ class ZoneProfile {
             </request>`
 
         console.log(reqData)
+
         this.request(reqData, (err, res) => {
-            cb(err ? err : null, res)
+
+            if (err) return cb(err)
+
+            cb(null, {})
         })
+    }
+
+    /**
+     * Spits out the info about a zoneProfile
+     * https://agent.api-eurodns.com/documentation/http/zoneprofile/info/
+     *
+     * @param id            Required        String      The ID to look up
+     * @param cb
+     * @returns {*}                         Object      A zoneProfile object
+     */
+    info (id, cb) {
+        if (!id || typeof id === 'function') return cb(new Error('You must provide an ID to get zoneProfile info'))
+
+        const reqData =
+            `<?xml version="1.0" encoding="UTF-8"?>
+            <request xmlns:zoneprofile="http://www.eurodns.com/zoneprofile">
+                <zoneprofile:info>
+                    <zoneprofile:id>${id}</zoneprofile:id>
+                </zoneprofile:info>
+            </request>`
+
+        this.request(reqData, (err, res) => {
+
+            if (err) return cb(err)
+
+            const profile = {
+                name: res.__text,
+                records: record.recordsToJson(res.records.record)
+            }
+
+            cb(null, profile)
+        })
+    }
+
+    /**
+     * Deletes a zoneProfile
+     * https://agent.api-eurodns.com/documentation/http/zoneprofile/remove/
+     *
+     * @param id        Required        String      The ID of the profile to be removed
+     * @param cb
+     * @returns {*}                     Object      Empty object
+     */
+    remove (id, cb) {
+        if (!id || typeof id === 'function') return cb(new Error('You must provide an ID to delete a zoneProfile'))
+
+        const reqData =
+            `<?xml version="1.0" encoding="UTF-8"?>
+            <request xmlns:zoneprofile="http://www.eurodns.com/zoneprofile">
+                <zoneprofile:remove>
+                    <zoneprofile:id>${id}</zoneprofile:id>
+                </zoneprofile:remove>
+            </request>`
+
+        this.request(reqData, (err, res) => {
+
+            if (err) return cb(err)
+
+            cb(null, {})
+        })
+    }
+
+    update (zoneProfile, cb) {
+        if (!zoneProfile.name) return cb(new Error('You must specify the name of the zoneProfile to update'))
+
     }
 
     /**
@@ -80,29 +172,10 @@ class ZoneProfile {
         let recordsXML = ''
 
         if (records && records.length > 0) {
-            records.forEach( record => {
+            records.forEach( rc => {
 
-                const recordXML =   `<zoneprofile:record>
-                            <record:type>${record.type}</record:type>
-                            ${record.redirectionType ? '<record:frame>' + record.redirectionType + '</record:frame>' : ''}
-                            ${record.newUrl ? '<record:newurl>' + record.newUrl + '</record:newurl>' : ''}
-                            ${record.source ? '<record:source>' + record.source + '</record:source>' : ''}
-                            ${record.destination ? '<record:destination>' + record.destination + '</record:destination>' : ''}
-                            ${record.host ? '<record:host>' + record.host + '</record:host>' : ''}
-                            ${record.data ? '<record:data>' + record.data + '</record:data>' : ''}
-                            ${record.ttl ? '<record:ttl>' + record.ttl + '</record:ttl>' : ''}
-                            ${record.mxPriority ? '<record:mx_priority>' + record.mxPriority + '</record:mx_priority>' : ''}
-                            ${record.refresh ? '<record:refresh>' + record.refresh + '</record:refresh>' : ''}
-                            ${record.retry ? '<record:retry>' + record.retry + '</record:retry>' : ''}
-                            ${record.expire ? '<record:expire>' + record.expire + '</record:expire>' : ''}
-                            ${record.minimum ? '<record:minimum>' + record.minimum + '</record:minimum>' : ''}
-                            ${record.serial ? '<record:serial>' + record.serial + '</record:serial>' : ''}
-                            ${record.respPerson ? '<record:resp_person>' + record.respPerson + '</record:resp_person>' : ''}
-                            ${record.weight ? '<record:weight>' + record.weight + '</record:weight>' : ''}
-                            ${record.port ? '<record:port>' + record.port + '</record:port>' : ''}
-                        </zoneprofile:record>`
-
-                    recordsXML += recordXML.replace(/^\s*[\r\n]/gm, "")
+                const recordXML =   `<zoneprofile:record>${record.recordToXml(rc)}</zoneprofile:record>`
+                recordsXML += recordXML.replace(/^\s*[\r\n]/gm, "")
             })
         }
 
