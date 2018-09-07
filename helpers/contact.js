@@ -26,11 +26,13 @@
  */
 module.exports.contactToXML = function (contact) {
 
+    // If a contact.profileId field is provided, it will return a basic contact
     if (contact.profileId && contact.profileId !== '') {
-        return `<contact:type>${contact.type}</contact:type>
+        return `<contact:type>${contact.type ? contact.type : ''}</contact:type>
                 <contact:contactprofileid>${contact.profileId}</contact:contactprofileid>`
     }
 
+    // Otherwise it will return a full contact block
     return `<contact:firstname>${contact.firstName ? contact.firstName : ''}</contact:firstname>
             ${contact.type ? '<contact:type>' + contact.type + '</contact:type>' : ''}
             <contact:lastname>${contact.lastName ? contact.lastName : ''}</contact:lastname>
@@ -78,7 +80,7 @@ module.exports.contactToJson = function (contact) {
 /**
  * Function to create the contact:create XML block
  *
- * @param contacts
+ * @param contacts      REQUIRED    Array   An array of contacts object
  */
 module.exports.create = function (contacts) {
 
@@ -90,7 +92,21 @@ module.exports.create = function (contacts) {
         })
     }
 
-    xml += '</contacts:create>'
+    xml += '</contact:create>'
+
+    return xml
+}
+
+module.exports.update = function (contacts) {
+    let xml = '<contact:update>'
+
+    if (contacts && contacts.length > 0) {
+        contacts.forEach( contact => {
+            xml += contactToXML(contact)
+        })
+    }
+
+    xml += '</contact:update>'
 
     return xml
 }

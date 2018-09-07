@@ -59,7 +59,7 @@ module.exports.create = function (nameservers) {
     // No nameservers provided using the default ones
     if (!nameservers || nameservers.length === 0) nameservers =  defaultNameservers
 
-    nameservers.forEach(nameserver => {
+    nameservers.forEach(ns => {
         xml +=
             `<nameserver:create>
                 <nameserver:priority>${ns.priority ? ns.priority : ''}</nameserver:priority>
@@ -68,6 +68,23 @@ module.exports.create = function (nameservers) {
             </nameserver:create>`
     })
 
+
+    return xml
+}
+
+module.exports.update = function (nameservers) {
+    let xml = ''
+
+    if (!nameservers || nameservers.length === 0) nameservers = []
+
+    nameservers.forEach( ns => {
+        xml +=
+            `<nameserver:update>
+                <nameserver:priority>${ns.priority ? ns.priority : ''}</nameserver:priority>
+                <nameserver:fqdn>${ns.fqdn ? ns.fqdn : ''}</nameserver:fqdn>
+                <nameserver:ipaddr>${ns.ip ? ns.ip : ''}</nameserver:ipaddr>
+            </nameserver:update>`
+    })
 
     return xml
 }

@@ -296,7 +296,7 @@ class Domain {
 
                 // Parse the nameservers of the domain
                 if (res.extension.domain && res.extension.domain.ns && res.extension.domain.ns.length > 0) {
-                    result.nameservers = nameserver.nsToJson(res.extens.domain.ns)
+                    result.nameservers = nameserver.nsToJson(res.extension.domain.ns)
                 }
 
                 // Parse the contact validation
@@ -312,6 +312,95 @@ class Domain {
 
     update (domain, cb) {
 
+        if (domain.nameserverProfileId && domain.nameservers && domain.nameservers.length > 0) return cb(new Error('Seems you provided a Nameservers array AND a nameservprofileId. This is not accepted'))
+        if (domain.nameservers && domain.nameservers.length > 0) {
+            domain.nameservers.forEach( nameserver => {
+                if (!nameserver.priority || !nameserver.fqdn || !nameserver.ip) return cb(new Error('Each nameserver must have a priority, fqdn and ip field!'))
+            })
+        }
+
+        if (!domain.contacts) domain.contacts = []
+
+        const reqData =
+            `<?xml version="1.0" encoding="UTF-8"?>
+            <request
+                xmlns:domain="http://www.eurodns.com/domain"
+                xmlns:nameserver="http://www.eurodns.com/nameserver"
+                xmlns:nameserverprofile="http://www.eurodns.com/nameserverprofile"
+                xmlns:zoneprofile="http://www.eurodns.com/zoneprofile">
+                <domain:update>
+                    <domain:name>${domain.name}</domain:name>
+                    ${domain.folderId ? '<domain:folderid>' + domain.folderId + '</domain:folderid>' : '' }
+                    ${domain.nameserverProfileId ? '<nameserverprofile:id>' + domain.nameserverProfileId + '</nameserverprofile:id>' : '' }
+                    ${domain.zoneProfileId ? '<zoneprofile:id>' + domain.zoneProfileId + '</zoneprofile:id>' : '' }
+                </domain:update>
+                
+                ${nameserver.update(domain.nameservers)}
+                ${contact.update(domain.contacts)}
+                
+                <extension:create>
+                    <extension:service>
+                        <service:domainprivacy>${domain.whoisPrivacy ? 'Yes': 'No'}</service:domainprivacy>
+                    </extension:service>
+                </extension:create>
+            </request>`
+
+        this.request(reqData, (err, res) => {
+            if (err) return cb(err)
+
+            cb(null, {})
+        })
+    }
+
+    /**
+     * This function locks a domain in your account
+     * https://agent.tryout-eurodns.com/documentation/http/domain/lock/
+     *
+     * @param domain    Required   String  The domain name to lock
+     */
+    lock (domain, cb) {
+
+        if (!domain || typeof domain === 'function' || domain === '') return cb(new Error('You must specify a domain name to be able to lock'))
+
+        const reqData =
+            `<?xml version="1.0" encoding="UTF-8"?>
+            <request xmlns:domain="http://www.eurodns.com/domain">
+                <domain:lock>
+                    <domain:name>${domain}</domain:name>
+                </domain:lock>
+            </request>`
+
+        this.request(reqData, (err, res) => {
+            if (err) return cb(err)
+
+            cb(null, {})
+        })
+    }
+
+    /**
+     * Unlock a domain
+     * https://agent.tryout-eurodns.com/documentation/http/domain/unlock/
+     *
+     * @param domain    Required    String  The domain name to unlock
+     * @param cb
+     * @return {*}                  Object  Returns an empty object on success
+     */
+    unlock (domain, cb) {
+        if (!domain || typeof domain === 'function' || domain === '') return cb(new Error('You must specify a domain name to be able to unlock it'))
+
+        const reqData =
+            `<?xml version="1.0" encoding="UTF-8"?>
+            <request xmlns:domain="http://www.eurodns.com/domain">
+                <domain:unlock>
+                    <domain:name>${domain}</domain:name>
+                </domain:unlock>
+            </request>`
+
+        this.request(reqData, (err, res) => {
+            if (err) return cb(err)
+
+            cb(null, {})
+        })
     }
 
     /**

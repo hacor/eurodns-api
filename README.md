@@ -37,6 +37,13 @@ const api = new EuroDNS(credentials)
 ### Domain
 - [domain.check](#domaincheck)
 - [domain.create](#domaincreate)
+- [domain.renew](#domainrenew)
+- [domain.setRenewalMode](#domainsetrenewalmode)
+- [domain.list](#domainlist)
+- [domain.info](#domaininfo)
+- [domain.update](#domainupdate)
+- [domain.lock](#domainlock)
+- [domain.unlock](#domainunlock)
 ### Contact profile
 - [contactProfile.list](#contactprofilelist)
 - [contactProfile.create](#contactprofilecreate)
@@ -50,9 +57,12 @@ const api = new EuroDNS(credentials)
 - [folder.add](#folderadd)
 - [folder.remove](#folderremove)
 ### Zone profile
-*Only works in productino mode*
+*Only works in production mode*
 - [zoneProfile.list](#zoneprofilelist)
 - [zoneProfile.create](#zoneprofilecreate)
+
+### Zones
+
 
 ## Modules
 All modules are based on the structure that can be found no the [EuroDNS API page](https://agent.tryout-eurodns.com/)
@@ -397,6 +407,81 @@ api.domain.info('appsynth.be', (err, res) => {
 
 #### domain.update
 Update a domain in your account. Currently the `dnssec` extension is unsupported!
+
+**Returns:** _nothing_
+```javascript
+
+// All commented fields are optional
+const domain = {
+    name: 'appsynth6.be',
+    //folderId: 'id',
+    //nameserverProfileId: 'id',
+    //zoneProfileId: 'id',
+    //nameservers: [ 
+    // You can not specify nameservers when nameserverProfileId exists
+    //    {
+    //        priority: 0,
+    //        fqdn: 'ns.example.com',
+    //        ip: '10.10.10.1'
+    //    }],
+    contacts: [
+        // Only add the contacts you wish to update
+        {
+            type: 'admin',
+            //profileId: 'id'
+            // If you don't have a profile ID, you specify the contact as explaned in contactProfile.add
+        }
+    ],
+    //whoisPrivacy: false
+}
+
+api.domain.update(domain, (err, res) => {
+    if (err) console.log(err.message)
+
+    console.log(res)
+})
+```
+
+#### domain.lock
+Lock a domain in your account
+**Returns:** _nothing_
+````javascript
+api.domain.lock('appsynth.be', (err, res) => {
+    if (err) console.log(err.message)
+
+    // The result should be an empty object {}
+    console.log(res)
+})
+````
+
+#### domain.unlock
+Unlock a domain in your account
+**Returns:** _nothing_
+````javascript
+api.domain.unlock('appsynth.be', (err, res) => {
+    if (err) console.log(err.message)
+
+    // The result should be an empty object {}
+    console.log(res)
+})
+````
+
+###Zones
+All the functions in the zone object
+
+#### zones.list
+List all the domains for which you created zones. You can provide a tld or provide an empty string to check for all tlds.
+
+**Returns:** `[ 'appsynth.be', 'appsynth1.be' ]`
+```javascript 1.5
+api.zones.list('.be', (err, res) => {
+    if (err) {
+        console.log(err)
+    } else {
+        console.log(res)
+    }
+})
+```
 
 ### Contact Profile
 Actions for the contact profiles
