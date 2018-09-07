@@ -27,7 +27,7 @@ const api = new EuroDNS(credentials)
 
 
 ## Functions yet implemented
-All modules are based on the structure that can be found no the [EuroDNS API page](https://agent.tryout-eurodns.com/)
+All modules are based on the structure that can be found on the [EuroDNS API page](https://agent.tryout-eurodns.com/)
 Every function needs a callback with the structure `(error, response)` and all the returned errors are of the `Error` type.
 
 ### Agent
