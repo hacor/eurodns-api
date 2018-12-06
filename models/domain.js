@@ -43,13 +43,13 @@ class Domain {
 
         this.request(reqData, (err, res) => {
             let json = []
-            if ( res.check && res.check.cd && !res.check.cd.length) {
+            if (res && res.check && res.check.cd && !res.check.cd.length) {
                 // A single domain was validated
                 json.push({
                     available: JSON.parse(res.check.cd.name._avail),
                     domain: res.check.cd.name.__text
                 })
-            } else if (res.check && res.check.cd && res.check.cd.length && res.check.cd.length > 0) {
+            } else if (res && res.check && res.check.cd && res.check.cd.length && res.check.cd.length > 0) {
                 // Multiple domains were validated
                 res.check.cd.forEach(domain => {
                     json.push({
