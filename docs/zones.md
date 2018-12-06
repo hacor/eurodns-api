@@ -101,7 +101,7 @@ const zone =  {
      }]
 }
 
-api.zones.zone(zone, (err, res) => {
+api.zones.create(zone, (err, res) => {
     if (err) {
         console.log(err)
     } else {

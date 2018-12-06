@@ -1,6 +1,6 @@
 {
   "name": "eurodns-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A NodeJS client library for the euroDNS API servers",
   "main": "index.js",
   "scripts": {
